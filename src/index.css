@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,900;1,900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", serif;
+}
+
+@layer base {
+  body {
+    @apply bg-neutral-50 text-neutral-900 font-sans antialiased;
+  }
+}
+
+.markdown-body {
+  @apply text-[13px] leading-[1.4] text-neutral-800;
+  font-family: "Inter", sans-serif;
+}
+
+.markdown-body h1 {
+  @apply text-2xl font-bold mb-1 mt-0 text-center uppercase tracking-tight text-black;
+}
+
+.markdown-body h2 {
+  @apply text-[14px] font-bold mb-2 mt-4 border-b border-black pb-0.5 uppercase tracking-wide text-black;
+}
+
+.markdown-body h3 {
+  @apply text-[14px] font-bold mb-1 mt-3 flex justify-between items-baseline;
+}
+
+.markdown-body ul {
+  @apply list-disc list-outside ml-5 mb-3 space-y-0.5;
+}
+
+.markdown-body p {
+  @apply mb-2;
+}
+
+.markdown-body strong {
+  @apply font-semibold text-black;
+}
+
+/* Specific formatting for "Company | Role | Dates" structure often used in resumes */
+.markdown-body blockquote {
+  @apply border-none p-0 m-0 italic text-neutral-600 mb-2;
+}
+
+.markdown-body hr {
+  @apply border-neutral-200 my-4;
+}
