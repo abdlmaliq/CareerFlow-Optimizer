@@ -295,23 +295,26 @@ export default function App() {
   );
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex flex-col items-center py-12 px-4 selection:bg-neutral-200">
-      <div className="max-w-4xl w-full">
+    <div className="min-h-screen bg-premium-bg flex flex-col items-center py-16 px-4 selection:bg-premium-accent/10">
+      <div className="max-w-5xl w-full">
         {/* Header */}
-        <header className="mb-12 text-center">
+        <header className="mb-16 text-center">
           <motion.div 
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center bg-black text-white px-3 py-1 rounded-full text-xs font-medium mb-4 tracking-wider uppercase"
+            className="inline-flex items-center bg-premium-black text-white px-4 py-1.5 rounded-full text-[10px] font-bold mb-6 tracking-[0.2em] uppercase"
           >
-            <Sparkles className="w-3 h-3 mr-2" />
-            AI-Powered Transformation
+            <Sparkles className="w-3.5 h-3.5 mr-2 text-premium-accent" />
+            Intelligence-Driven Optimization
           </motion.div>
-          <h1 className="text-5xl font-serif italic font-black text-neutral-900 tracking-tighter mb-4">
-            CareerFlow <span className="font-sans not-italic text-neutral-400 font-light">Optimizer Pro</span>
+          
+          <h1 className="text-6xl md:text-7xl font-serif italic font-bold text-premium-black tracking-tighter mb-6 relative inline-block">
+            CareerFlow
+            <span className="absolute -top-4 -right-12 font-display not-italic text-xs bg-premium-accent text-white px-2 py-0.5 rounded italic tracking-normal">v2.0</span>
           </h1>
-          <p className="text-neutral-500 max-w-xl mx-auto">
-            The 6-stage optimization engine designed to elevate your professional narrative to consulting standards.
+          
+          <p className="text-premium-gray max-w-2xl mx-auto text-lg leading-relaxed font-light">
+            An elite 6-stage refinement engine that transforms your professional background into a high-impact narrative tailored for top-tier hiring managers.
           </p>
         </header>
 
@@ -319,33 +322,43 @@ export default function App() {
           {phase === 'INPUT' && (
             <motion.div
               key="input"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white p-8 rounded-2xl shadow-xl shadow-neutral-200 border border-neutral-100"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              className="bg-white p-10 rounded-[2rem] shadow-2xl shadow-slate-200/50 border border-slate-100"
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-4">
-                  <div className="flex items-center text-neutral-900 font-semibold">
-                    <Briefcase className="w-4 h-4 mr-2" />
-                    Job Description
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center text-premium-black font-bold uppercase tracking-widest text-xs">
+                      <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center mr-3">
+                        <Briefcase className="w-4 h-4 text-premium-black" />
+                      </div>
+                      Target Opportunity
+                    </div>
                   </div>
                   <textarea
-                    placeholder="Paste the target Job Description here..."
-                    className="w-full h-80 p-4 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all outline-none text-sm leading-relaxed"
+                    placeholder="Paste the target Job Description or requirements here..."
+                    className="w-full h-80 p-5 bg-slate-50/50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-premium-accent/20 focus:border-premium-accent/40 transition-all outline-none text-sm leading-relaxed placeholder:text-slate-300"
                     value={jdText}
                     onChange={(e) => setJdText(e.target.value)}
                   />
                 </div>
-                <div className="space-y-4">
-                  <div className="flex items-center text-neutral-900 font-semibold">
-                    <FileText className="w-4 h-4 mr-2" />
-                    Current Resume (PDF or TXT)
+                
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center text-premium-black font-bold uppercase tracking-widest text-xs">
+                      <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center mr-3">
+                        <FileText className="w-4 h-4 text-premium-black" />
+                      </div>
+                      Current Credentials
+                    </div>
                   </div>
+                  
                   <label 
                     className={cn(
-                      "w-full h-80 flex flex-col items-center justify-center border-2 border-dashed rounded-xl cursor-pointer transition-all gap-4 px-6 text-center",
-                      cvText ? "bg-green-50/50 border-green-200" : "bg-neutral-50 border-neutral-200 hover:border-black hover:bg-neutral-100/50",
+                      "w-full h-80 flex flex-col items-center justify-center border-2 border-dashed rounded-2xl cursor-pointer transition-all gap-5 px-8 text-center",
+                      cvText ? "bg-blue-50/30 border-premium-accent/30" : "bg-slate-50/50 border-slate-200 hover:border-premium-black hover:bg-slate-100/50",
                       isReadingFile && "animate-pulse opacity-50 cursor-wait"
                     )}
                   >
@@ -358,35 +371,35 @@ export default function App() {
                     />
                     
                     {isReadingFile ? (
-                      <Loader2 className="w-10 h-10 text-neutral-400 animate-spin" />
+                      <Loader2 className="w-12 h-12 text-slate-300 animate-spin" />
                     ) : cvText ? (
-                      <>
-                        <div className="bg-green-100 p-4 rounded-full">
-                          <FileCheck className="w-8 h-8 text-green-600" />
+                      <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="flex flex-col items-center">
+                        <div className="bg-premium-accent/10 p-5 rounded-full mb-4">
+                          <FileCheck className="w-10 h-10 text-premium-accent" />
                         </div>
-                        <div>
-                          <p className="font-bold text-neutral-900">{cvFileName}</p>
-                          <p className="text-sm text-green-600">File uploaded and parsed successfully</p>
-                        </div>
+                        <p className="font-bold text-premium-black max-w-[200px] truncate">{cvFileName}</p>
+                        <p className="text-sm text-premium-accent font-medium mt-1 uppercase tracking-wide">Analysis Ready</p>
                         <button 
                           onClick={(e) => {
                             e.preventDefault();
                             setCvText('');
                             setCvFileName(null);
                           }}
-                          className="text-xs text-neutral-400 hover:text-red-500 underline"
+                          className="mt-4 text-[10px] text-slate-400 hover:text-red-500 font-bold uppercase tracking-widest transition-colors"
                         >
                           Change File
                         </button>
-                      </>
+                      </motion.div>
                     ) : (
                       <>
-                        <div className="bg-neutral-100 p-4 rounded-full">
-                          <FileUp className="w-8 h-8 text-neutral-400" />
+                        <div className="bg-white p-5 rounded-full shadow-sm border border-slate-100">
+                          <FileUp className="w-10 h-10 text-slate-300" />
                         </div>
                         <div>
-                          <p className="font-bold text-neutral-900">Click to upload or drag and drop</p>
-                          <p className="text-sm text-neutral-400 mt-1">Supports PDF and Text files</p>
+                          <p className="font-bold text-premium-black text-lg">Source Document</p>
+                          <p className="text-sm text-slate-400 mt-2 leading-relaxed">
+                            Upload your existing resume in PDF or Text format to begin the extraction.
+                          </p>
                         </div>
                       </>
                     )}
@@ -395,18 +408,23 @@ export default function App() {
               </div>
               
               {error && (
-                <div className="mt-6 flex items-center bg-red-50 text-red-600 p-3 rounded-lg text-sm">
-                  <AlertCircle className="w-4 h-4 mr-2" />
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-8 flex items-center bg-red-50 text-red-600 p-4 rounded-xl text-sm border border-red-100"
+                >
+                  <AlertCircle className="w-5 h-5 mr-3 flex-shrink-0" />
                   {error}
-                </div>
+                </motion.div>
               )}
 
               <button
                 onClick={startOptimization}
-                className="w-full mt-8 bg-black hover:bg-neutral-800 text-white py-4 rounded-xl font-bold transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center"
+                disabled={isReadingFile}
+                className="w-full mt-10 bg-premium-black hover:bg-slate-800 text-white py-5 rounded-2xl font-bold tracking-wide transition-all transform hover:scale-[1.005] active:scale-[0.99] flex items-center justify-center shadow-xl shadow-slate-200 disabled:opacity-50"
               >
-                Start Optimization Engine
-                <ChevronRight className="ml-2 w-5 h-5" />
+                Launch Optimization Framework
+                <ChevronRight className="ml-2 w-5 h-5 opacity-50" />
               </button>
             </motion.div>
           )}
@@ -416,95 +434,150 @@ export default function App() {
               key="optimizing"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="flex flex-col items-center"
+              exit={{ opacity: 0, scale: 0.98 }}
+              className="flex flex-col items-center w-full"
             >
-              {renderProgress()}
+              <div className="mb-12 w-full max-w-2xl px-4">
+                <div className="flex items-center justify-between relative">
+                  <div className="absolute top-1/2 left-0 w-full h-[1.5px] bg-slate-200 -z-10" />
+                  {[1, 2, 3, 4, 5, 6].map((s) => (
+                    <motion.div 
+                      key={s} 
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: s * 0.1 }}
+                      className="flex flex-col items-center gap-3 bg-premium-bg"
+                    >
+                      <div 
+                        className={cn(
+                          "w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-500 border-2",
+                          currentStage === s ? "bg-premium-black text-white border-premium-black scale-125 shadow-lg shadow-premium-black/20" : 
+                          currentStage > s ? "bg-white text-premium-accent border-premium-accent" : "bg-white text-slate-300 border-slate-200"
+                        )}
+                      >
+                        {currentStage > s ? <CheckCircle2 className="w-5 h-5" /> : s}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
 
-              <div className="w-full bg-white p-8 rounded-2xl shadow-xl border border-neutral-100 min-h-[500px] flex flex-col overflow-hidden">
-                <div className="flex items-center justify-between mb-6 border-b border-neutral-100 pb-4">
-                  <div>
-                    <span className="text-xs font-bold text-neutral-400 uppercase tracking-widest">Stage {currentStage}</span>
-                    <h2 className="text-xl font-bold text-neutral-900">
-                      {currentStage === 1 && "Initial Strategic Re-write"}
-                      {currentStage === 2 && "Work Experience Alignment"}
-                      {currentStage === 3 && "ATS Keyword Infusion"}
-                      {currentStage === 4 && "Gap Analysis & Reframing"}
-                      {currentStage === 5 && "Executive Summary Crafting"}
-                      {currentStage === 6 && "Hiring Manager Review"}
-                    </h2>
-                  </div>
-                  {isProcessing && (
-                    <div className="flex items-center text-black font-semibold animate-pulse">
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Optimizing...
-                    </div>
-                  )}
+              <div className="w-full bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100 min-h-[650px] flex flex-col overflow-hidden relative">
+                {/* Stage Indicator Bar */}
+                <div className="absolute top-0 left-0 w-full h-1.5 bg-slate-100">
+                  <motion.div 
+                    initial={{ width: "0%" }}
+                    animate={{ width: `${(currentStage / 6) * 100}%` }}
+                    className="h-full bg-premium-accent transition-all duration-1000 ease-in-out"
+                  />
                 </div>
 
-                <div className="flex-1 overflow-y-auto pr-2 max-h-[600px]">
-                  {stageOutputs[currentStage - 1] ? (
-                    <div className="markdown-body">
-                      <ReactMarkdown>{stageOutputs[currentStage - 1]}</ReactMarkdown>
+                <div className="px-10 py-12 flex flex-col flex-1">
+                  <div className="flex items-center justify-between mb-10 pb-6 border-b border-slate-50">
+                    <div>
+                      <div className="inline-flex items-center px-2 py-0.5 rounded bg-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">
+                        Optimization Phase {currentStage}
+                      </div>
+                      <h2 className="text-3xl font-display font-bold text-premium-black tracking-tight">
+                        {currentStage === 1 && "Strategic Rewrite"}
+                        {currentStage === 2 && "Experience Alignment"}
+                        {currentStage === 3 && "Keyword Engineering"}
+                        {currentStage === 4 && "Narrative Structuring"}
+                        {currentStage === 5 && "Executive Polish"}
+                        {currentStage === 6 && "Final Review Cycle"}
+                      </h2>
                     </div>
-                  ) : !isProcessing ? (
-                    <div className="h-full flex flex-col items-center justify-center text-neutral-400 space-y-4">
-                      {error ? (
-                        <div className="flex flex-col items-center p-8 text-center bg-red-50 rounded-xl border border-red-100 max-w-md">
-                          <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
-                          <h3 className="text-red-900 font-bold mb-2 uppercase text-xs tracking-widest">Optimization Error</h3>
-                          <p className="text-red-600 text-sm mb-6 leading-relaxed">
-                            {error}
-                          </p>
-                          <button 
-                            onClick={() => runStage(currentStage)}
-                            className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg text-sm font-bold transition-all shadow-md active:scale-95 flex items-center"
-                          >
-                            <Sparkles className="w-4 h-4 mr-2" />
-                            Retry Stage {currentStage}
-                          </button>
-                        </div>
-                      ) : (
-                        <>
-                          <Loader2 className="w-12 h-12 animate-spin" />
-                          <p>Engine warm-up in progress...</p>
-                        </>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="h-full flex flex-col items-center justify-center text-neutral-400 space-y-4">
-                      <Loader2 className="w-12 h-12 animate-spin" />
-                      <p className="animate-pulse">Analyzing and refining Stage {currentStage}...</p>
-                    </div>
-                  )}
-                </div>
-
-                <div className="mt-8 flex space-x-4">
-                  <button
-                    onClick={() => setPhase('INPUT')}
-                    className="flex items-center bg-neutral-100 hover:bg-neutral-200 text-neutral-900 px-6 py-3 rounded-xl font-semibold transition-all relative z-20"
-                  >
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    Reset
-                  </button>
-                  <button
-                    onClick={approveStage}
-                    disabled={!stageOutputs[currentStage - 1] || isProcessing}
-                    className="flex-1 bg-black hover:bg-neutral-800 disabled:opacity-30 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg flex items-center justify-center relative overflow-hidden"
-                  >
-                    <span className="relative z-10 flex items-center">
-                      {currentStage === 6 ? "Finalizing..." : "Next Stage (Auto-proceeding...)"}
-                      <ChevronRight className="ml-2 w-5 h-5" />
-                    </span>
-                    {!isProcessing && stageOutputs[currentStage - 1] && (
-                      <motion.div 
-                        initial={{ x: "-100%" }}
-                        animate={{ x: "0%" }}
-                        transition={{ duration: currentStage === 6 ? 4 : 3, ease: "linear" }}
-                        className="absolute inset-0 bg-neutral-700 pointer-events-none"
-                      />
+                    {isProcessing && (
+                      <div className="flex items-center text-premium-accent text-sm font-bold tracking-wider">
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        PROCESSING
+                      </div>
                     )}
-                  </button>
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-slate-200">
+                    {stageOutputs[currentStage - 1] ? (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="markdown-body p-4"
+                      >
+                        <ReactMarkdown>{stageOutputs[currentStage - 1]}</ReactMarkdown>
+                      </motion.div>
+                    ) : !isProcessing ? (
+                      <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-6">
+                        {error ? (
+                          <div className="flex flex-col items-center p-10 text-center bg-red-50/50 rounded-3xl border border-red-100 max-w-md">
+                            <AlertCircle className="w-14 h-14 text-red-500 mb-5" />
+                            <h3 className="text-red-900 font-bold mb-3 uppercase text-sm tracking-widest">Protocol Failure</h3>
+                            <p className="text-red-600 text-sm mb-8 leading-relaxed">
+                              {error}
+                            </p>
+                            <button 
+                              onClick={() => runStage(currentStage)}
+                              className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl text-sm font-bold transition-all shadow-lg active:scale-95 flex items-center"
+                            >
+                              <Sparkles className="w-4 h-4 mr-2" />
+                              Retry Sequence
+                            </button>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="relative">
+                              <div className="absolute inset-0 bg-slate-100 animate-ping rounded-full scale-150 opacity-20" />
+                              <Loader2 className="w-16 h-16 text-slate-200 animate-spin relative" />
+                            </div>
+                            <p className="font-medium tracking-wide">Initializing secure engine...</p>
+                          </>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-6 bg-slate-50/30 rounded-3xl">
+                        <div className="relative">
+                          <motion.div 
+                            animate={{ rotate: 360 }}
+                            transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
+                            className="w-24 h-24 border-4 border-dashed border-slate-200 rounded-full flex items-center justify-center"
+                          >
+                            <Sparkles className="w-10 h-10 text-premium-accent/40" />
+                          </motion.div>
+                        </div>
+                        <div className="text-center">
+                          <p className="font-bold text-premium-black tracking-widest text-xs uppercase mb-2">Stage {currentStage} in Progress</p>
+                          <p className="text-sm font-light italic leading-loose opacity-70">Synthesizing professional background with market requirements...</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-12 flex items-center gap-6 pt-8 border-t border-slate-50">
+                    <button
+                      onClick={() => setPhase('INPUT')}
+                      className="group flex items-center bg-slate-100 hover:bg-slate-200 text-slate-600 px-8 py-4 rounded-2xl font-bold text-sm transition-all"
+                    >
+                      <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+                      Abort
+                    </button>
+                    
+                    <button
+                      onClick={approveStage}
+                      disabled={!stageOutputs[currentStage - 1] || isProcessing}
+                      className="flex-1 bg-premium-black hover:bg-slate-800 disabled:opacity-20 disabled:cursor-not-allowed text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-2xl shadow-slate-200 flex items-center justify-center relative overflow-hidden group"
+                    >
+                      <span className="relative z-10 flex items-center tracking-wide">
+                        {currentStage === 6 ? "Finalizing Report" : "Proceed to Next Stage"}
+                        <ChevronRight className="ml-2 w-5 h-5 opacity-40 group-hover:translate-x-1 transition-transform" />
+                      </span>
+                      {!isProcessing && stageOutputs[currentStage - 1] && (
+                        <motion.div 
+                          initial={{ x: "-100%" }}
+                          animate={{ x: "0%" }}
+                          transition={{ duration: currentStage === 6 ? 4 : 3, ease: "linear" }}
+                          className="absolute inset-0 bg-slate-800 pointer-events-none"
+                        />
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -513,57 +586,61 @@ export default function App() {
           {phase === 'DEPLOYMENT' && (
             <motion.div
               key="deployment"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white p-8 rounded-2xl shadow-2xl border-2 border-black"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white p-12 rounded-[3rem] shadow-2xl border-2 border-premium-black relative overflow-hidden"
             >
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="bg-black p-2 rounded-lg">
+              <div className="absolute top-0 left-0 w-full h-1.5 bg-premium-black" />
+              
+              <div className="flex items-center space-x-4 mb-8">
+                <div className="bg-premium-black p-3 rounded-2xl">
                   <Rocket className="text-white w-6 h-6" />
                 </div>
-                <h2 className="text-2xl font-black italic font-serif">Developer Configuration Required</h2>
+                <div>
+                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Security Protocol</div>
+                  <h2 className="text-3xl font-display font-bold text-premium-black tracking-tight">Deployment Synthesis</h2>
+                </div>
               </div>
               
-              <p className="text-neutral-500 mb-8 leading-relaxed">
-                To finalize the deployment of this app instance and enable revenue integration, please provide the following secure metadata.
+              <p className="text-slate-500 mb-10 leading-relaxed max-w-md">
+                To finalize the session and enable synchronized analytics, provide the integration metadata below.
               </p>
 
-              <div className="space-y-6">
-                <div>
-                  <label className="flex items-center text-sm font-bold text-neutral-800 mb-2 uppercase tracking-tighter">
-                    <ShieldCheck className="w-4 h-4 mr-2" />
-                    Google Ads Client ID & Secret
+              <div className="space-y-8">
+                <div className="space-y-3">
+                  <label className="flex items-center text-[10px] font-black text-premium-black uppercase tracking-[0.2em] ml-1">
+                    <ShieldCheck className="w-3.5 h-3.5 mr-2 text-premium-accent" />
+                    Integration Access Key
                   </label>
                   <input
                     type="password"
-                    placeholder="Enter Client ID or Secret..."
-                    className="w-full p-4 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-black outline-none"
+                    placeholder="Enter secure platform key..."
+                    className="w-full p-5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-premium-accent/20 outline-none transition-all placeholder:text-slate-300"
                     value={adsClientId}
                     onChange={(e) => setAdsClientId(e.target.value)}
                   />
-                  <p className="text-[10px] text-neutral-400 mt-1 uppercase">Stored in environment variables</p>
                 </div>
 
-                <div>
-                  <label className="flex items-center text-sm font-bold text-neutral-800 mb-2 uppercase tracking-tighter">
-                    <Coins className="w-4 h-4 mr-2" />
-                    Crypto Donation Address (BTC/ETH/SOL)
+                <div className="space-y-3">
+                  <label className="flex items-center text-[10px] font-black text-premium-black uppercase tracking-[0.2em] ml-1">
+                    <Coins className="w-3.5 h-3.5 mr-2 text-premium-accent" />
+                    Transaction Endpoint
                   </label>
                   <input
                     type="text"
-                    placeholder="Enter wallet address..."
-                    className="w-full p-4 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-black outline-none"
+                    placeholder="Enter wallet or destination address..."
+                    className="w-full p-5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-premium-accent/20 outline-none transition-all placeholder:text-slate-300"
                     value={cryptoAddress}
                     onChange={(e) => setCryptoAddress(e.target.value)}
                   />
-                   <p className="text-[10px] text-neutral-400 mt-1 uppercase">Used for direct developer tips</p>
+                   <p className="text-[9px] text-slate-400 font-medium uppercase tracking-wide ml-1 opacity-60">Verified via environment layer</p>
                 </div>
 
                 <button
                   onClick={finalizeDeployment}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl font-black uppercase tracking-widest transition-all shadow-lg active:scale-95"
+                  className="w-full bg-premium-black hover:bg-slate-800 text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] transition-all shadow-xl active:scale-[0.98]"
                 >
-                  Finalize & Deploy
+                  Confirm & Synchronize
                 </button>
               </div>
             </motion.div>
@@ -572,109 +649,119 @@ export default function App() {
           {phase === 'COMPLETE' && (
             <motion.div
               key="complete"
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="text-center bg-white p-8 rounded-2xl shadow-xl w-full"
+              className="bg-white p-12 rounded-[3rem] shadow-2xl shadow-slate-200/50 border border-slate-100 text-center w-full relative overflow-hidden"
             >
-              <div className="mb-6 flex justify-center">
-                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
+              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-premium-accent via-blue-400 to-green-400" />
+              
+              <div className="mb-10 flex justify-center">
+                <motion.div 
+                  initial={{ scale: 0 }} 
+                  animate={{ scale: 1, rotate: 360 }} 
+                  className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center border-4 border-white shadow-xl shadow-green-100"
+                >
                   <CheckCircle2 className="w-12 h-12 text-green-600" />
-                </div>
+                </motion.div>
               </div>
-              <h2 className="text-3xl font-bold mb-2 italic font-serif text-neutral-900">Optimization Complete</h2>
-              <p className="text-neutral-500 mb-8 max-w-sm mx-auto">
-                Your professional narrative and cover letter have been fully transformed and are ready for high-impact applications.
+              
+              <h2 className="text-4xl font-display font-black mb-3 text-premium-black tracking-tighter">Success Manifested</h2>
+              <p className="text-slate-500 mb-12 max-w-md mx-auto leading-relaxed">
+                Your professional profile has been reconstructed with elite-tier semantics. Export your assets below.
               </p>
 
               {/* Tabs */}
-              <div className="flex border-b border-neutral-100 mb-6">
+              <div className="flex p-1.5 bg-slate-100/50 rounded-2xl mb-10 max-w-xs mx-auto">
                 <button
                   onClick={() => setActiveTab('resume')}
                   className={cn(
-                    "flex-1 py-4 text-sm font-bold uppercase tracking-widest transition-all border-b-2",
-                    activeTab === 'resume' ? "border-black text-black" : "border-transparent text-neutral-400 hover:text-neutral-600"
+                    "flex-1 py-3 text-[10px] font-black uppercase tracking-widest transition-all rounded-xl",
+                    activeTab === 'resume' ? "bg-white text-premium-black shadow-sm" : "text-slate-400 hover:text-slate-600"
                   )}
                 >
-                  Optimized Resume
+                  Optimizer Resume
                 </button>
                 <button
                   onClick={() => setActiveTab('cover-letter')}
                   className={cn(
-                    "flex-1 py-4 text-sm font-bold uppercase tracking-widest transition-all border-b-2",
-                    activeTab === 'cover-letter' ? "border-black text-black" : "border-transparent text-neutral-400 hover:text-neutral-600"
+                    "flex-1 py-3 text-[10px] font-black uppercase tracking-widest transition-all rounded-xl",
+                    activeTab === 'cover-letter' ? "bg-white text-premium-black shadow-sm" : "text-slate-400 hover:text-slate-600"
                   )}
                 >
                   Cover Letter
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
                 {activeTab === 'resume' ? (
                   <>
                     <button
                       onClick={downloadPdf}
                       disabled={!!isDownloading}
-                      className="flex items-center justify-center space-x-3 bg-neutral-900 hover:bg-neutral-800 text-white py-4 rounded-xl font-bold transition-all disabled:opacity-50"
+                      className="flex items-center justify-center space-x-3 bg-premium-black hover:bg-slate-800 text-white py-5 rounded-2xl font-bold transition-all disabled:opacity-50 shadow-xl shadow-slate-100"
                     >
                       {isDownloading === 'pdf' ? (
                         <Loader2 className="w-5 h-5 animate-spin" />
                       ) : (
-                        <FileDown className="w-5 h-5" />
+                        <FileDown className="w-5 h-5 opacity-40" />
                       )}
-                      <span>Download PDF</span>
+                      <span>Export as PDF</span>
                     </button>
                     <button
                       onClick={downloadWord}
                       disabled={!!isDownloading}
-                      className="flex items-center justify-center space-x-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 py-4 rounded-xl font-bold transition-all disabled:opacity-50"
+                      className="flex items-center justify-center space-x-3 bg-slate-100 hover:bg-slate-200 text-premium-black py-5 rounded-2xl font-bold transition-all disabled:opacity-50"
                     >
                       {isDownloading === 'word' ? (
                         <Loader2 className="w-5 h-5 animate-spin" />
                       ) : (
-                        <Download className="w-5 h-5" />
+                        <Download className="w-5 h-5 opacity-40" />
                       )}
-                      <span>Download Word</span>
+                      <span>Export as Word</span>
                     </button>
                   </>
                 ) : (
                   <button
                     onClick={downloadClWord}
                     disabled={!!isDownloading}
-                    className="col-span-2 flex items-center justify-center space-x-3 bg-neutral-900 hover:bg-neutral-800 text-white py-4 rounded-xl font-bold transition-all disabled:opacity-50"
+                    className="col-span-2 flex items-center justify-center space-x-3 bg-premium-black hover:bg-slate-800 text-white py-5 rounded-2xl font-bold transition-all disabled:opacity-50 shadow-xl shadow-slate-100"
                   >
                     {isDownloading === 'cl-word' ? (
                       <Loader2 className="w-5 h-5 animate-spin" />
                     ) : (
-                      <FileDown className="w-5 h-5" />
+                      <FileDown className="w-5 h-5 opacity-40" />
                     )}
-                    <span>Download Cover Letter (Word)</span>
+                    <span>Direct Export to Word</span>
                   </button>
                 )}
               </div>
 
-              <div className="bg-neutral-50 p-6 rounded-xl text-left border border-neutral-200 mb-8 overflow-hidden">
-                <div className="text-[10px] font-bold text-neutral-400 uppercase mb-4 tracking-widest border-b border-neutral-100 pb-2">
-                  {activeTab === 'resume' ? "Final Optimized Document" : "Tailored Cover Letter"}
+              <div className="bg-slate-50/50 p-8 rounded-3xl text-left border border-slate-100 mb-12 overflow-hidden backdrop-blur-sm">
+                <div className="flex items-center justify-between mb-6 pb-4 border-b border-white">
+                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                    {activeTab === 'resume' ? "MASTER RESUME OUTPUT" : "TAILORED LETTER OUTPUT"}
+                  </div>
+                  <div className="w-3 h-3 rounded-full bg-slate-200" />
                 </div>
                 
                 {activeTab === 'resume' ? (
                   <div 
                     ref={finalCvRef}
-                    className="markdown-body max-h-[500px] overflow-y-auto pr-2 bg-white p-6 rounded-lg border border-neutral-100 shadow-sm"
+                    className="markdown-body max-h-[600px] overflow-y-auto pr-4 bg-white p-10 rounded-2xl border border-white shadow-sm scrollbar-thin scrollbar-thumb-slate-100"
                   >
                     <ReactMarkdown>{stageOutputs[5]}</ReactMarkdown>
                   </div>
                 ) : (
                   <div 
                     ref={finalClRef}
-                    className="markdown-body max-h-[500px] overflow-y-auto pr-2 bg-white p-6 rounded-lg border border-neutral-100 shadow-sm"
+                    className="markdown-body max-h-[600px] overflow-y-auto pr-4 bg-white p-10 rounded-2xl border border-white shadow-sm scrollbar-thin scrollbar-thumb-slate-100"
                   >
                     {coverLetter ? (
                       <ReactMarkdown>{coverLetter}</ReactMarkdown>
                     ) : (
-                      <div className="py-12 text-center text-neutral-400">
-                        <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
-                        Generating cover letter...
+                      <div className="py-20 text-center text-slate-300">
+                        <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 opacity-50" />
+                        <p className="font-medium">Finalizing synthesis...</p>
                       </div>
                     )}
                   </div>
@@ -683,17 +770,25 @@ export default function App() {
 
               <button
                 onClick={() => window.location.reload()}
-                className="text-neutral-400 hover:text-black font-semibold text-sm underline underline-offset-4"
+                className="group flex items-center mx-auto text-slate-400 hover:text-premium-black font-bold text-xs uppercase tracking-widest transition-all"
               >
-                Start New Optimization Session
+                <Rocket className="w-4 h-4 mr-2 group-hover:-translate-y-1 transition-transform" />
+                Start New Deployment Session
               </button>
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* Footer */}
-        <footer className="mt-12 text-center text-[10px] text-neutral-400 uppercase tracking-[0.2em] pb-12">
-          Engine Version 2.0.1 • Senior Strategist Protocol Active
+        <footer className="mt-20 text-center pb-20">
+          <div className="flex items-center justify-center space-x-6 text-[11px] font-bold text-slate-300 uppercase tracking-[0.3em] mb-4">
+            <span>Optimized by Gemini</span>
+            <div className="w-1 h-1 rounded-full bg-slate-200" />
+            <span>Enterprise Grade</span>
+          </div>
+          <p className="text-[9px] text-slate-300 opacity-50 uppercase tracking-[0.1em]">
+            © 2026 CoreFlow Intelligence Systems • All Rights Reserved
+          </p>
         </footer>
       </div>
     </div>

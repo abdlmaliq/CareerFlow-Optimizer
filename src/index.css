@@ -1,51 +1,65 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,900;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", sans-serif;
   --font-serif: "Playfair Display", serif;
+  
+  --color-premium-black: #0F1115;
+  --color-premium-gray: #64748B;
+  --color-premium-accent: #3B82F6;
+  --color-premium-bg: #F8FAFC;
 }
 
 @layer base {
   body {
-    @apply bg-neutral-50 text-neutral-900 font-sans antialiased;
+    @apply bg-premium-bg text-premium-black font-sans antialiased;
+  }
+  
+  h1, h2, h3, h4 {
+    @apply font-display tracking-tight;
   }
 }
 
 .markdown-body {
-  @apply text-[13px] leading-[1.4] text-neutral-800;
+  @apply text-[13.5px] leading-[1.5] text-slate-700;
   font-family: "Inter", sans-serif;
 }
 
 .markdown-body h1 {
-  @apply text-2xl font-bold mb-1 mt-0 text-center uppercase tracking-tight text-black;
+  @apply text-2xl font-bold mb-2 mt-0 text-center uppercase tracking-tighter text-premium-black font-display;
 }
 
 .markdown-body h2 {
-  @apply text-[14px] font-bold mb-2 mt-4 border-b border-black pb-0.5 uppercase tracking-wide text-black;
+  @apply text-[15px] font-bold mb-2 mt-5 border-b border-slate-200 pb-1 uppercase tracking-wider text-premium-black font-display;
 }
 
 .markdown-body h3 {
-  @apply text-[14px] font-bold mb-1 mt-3 flex justify-between items-baseline;
+  @apply text-[14px] font-semibold mb-1 mt-4 flex justify-between items-baseline text-slate-900;
 }
 
 .markdown-body ul {
-  @apply list-disc list-outside ml-5 mb-3 space-y-0.5;
+  @apply list-disc list-outside ml-5 mb-4 space-y-1;
 }
 
 .markdown-body p {
-  @apply mb-2;
+  @apply mb-3;
 }
 
 .markdown-body strong {
-  @apply font-semibold text-black;
+  @apply font-semibold text-slate-900;
 }
 
-/* Specific formatting for "Company | Role | Dates" structure often used in resumes */
 .markdown-body blockquote {
-  @apply border-none p-0 m-0 italic text-neutral-600 mb-2;
+  @apply border-l-2 border-slate-200 pl-4 py-1 my-3 italic text-slate-500 bg-slate-50/50 rounded-r-lg;
 }
 
 .markdown-body hr {
-  @apply border-neutral-200 my-4;
+  @apply border-slate-100 my-6;
+}
+
+/* Glass effect for premium UI */
+.glass-panel {
+  @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-sm;
 }
