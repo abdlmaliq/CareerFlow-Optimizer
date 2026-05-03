@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import cors from "cors";
@@ -15,7 +16,9 @@ async function startServer() {
 
   // Root level middleware
   app.use(cors());
-  app.use(express.json());
+  // Increase limit to 10MB to handle large resumes and JDs
+  app.use(express.json({ limit: "10mb" }));
+  app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
   // Rate limiting: 35 requests per 24 hours per IP (approx 5 full optimizations)
   const limiter = rateLimit({
@@ -30,12 +33,17 @@ async function startServer() {
   const getApiKey = () => {
     const key = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
     if (!key || key === 'undefined' || key === 'null') {
-      throw new Error('GEMINI_API_KEY is missing in server environment.');
+      throw new Error('GEMINI_API_KEY is missing in server environment. Please configure it in your Netlify/Github/Cloud variables.');
     }
     return key;
   };
 
-  const ai = new GoogleGenAI({ apiKey: getApiKey() });
+  let ai: GoogleGenAI;
+  try {
+    ai = new GoogleGenAI({ apiKey: getApiKey() });
+  } catch (err) {
+    console.error("Gemini Initialization Failed:", err);
+  }
 
   // API Routes
   app.post("/api/optimize", limiter, async (req, res) => {
@@ -45,20 +53,30 @@ async function startServer() {
       return res.status(400).json({ error: "Prompt is required" });
     }
 
+    if (!ai) {
+      return res.status(500).json({ error: "AI Engine not initialized. Check API Key." });
+    }
+
     try {
+      // Use gemini-flash-latest as per skill guidance
       const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: "gemini-flash-latest",
         contents: prompt,
       });
 
       if (!response.text) {
-        throw new Error("The AI returned an empty response.");
+        throw new Error("The AI returned an empty response candidate.");
       }
 
       res.json({ text: response.text });
     } catch (error: any) {
       console.error("Gemini Server Error:", error);
-      res.status(500).json({ error: error.message || "Failed to generate content" });
+      // Clean up error message for the client
+      let cleanMessage = error.message || "Failed to generate content";
+      if (cleanMessage.includes("API key")) {
+        cleanMessage = "Invalid API Key in server configuration.";
+      }
+      res.status(500).json({ error: cleanMessage });
     }
   });
 

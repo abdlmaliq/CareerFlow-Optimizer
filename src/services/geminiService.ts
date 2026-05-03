@@ -15,11 +15,15 @@ const handleGeminiError = (error: any) => {
     return "The AI safety filters blocked this request. Try adjusting the input text.";
   }
 
+  if (errorMessage.toLowerCase().includes("payload too large") || errorMessage.toLowerCase().includes("413")) {
+    return "The input data is too large for the processing engine. Try shortening your resume or JD.";
+  }
+
   if (errorMessage.toLowerCase().includes("fetch") || errorMessage.toLowerCase().includes("network")) {
     return "Network error. Please check your internet connection.";
   }
 
-  return "The AI engine encountered an issue. Please try clicking 'Retry Stage'.";
+  return errorMessage || "The AI engine encountered an issue. Please try clicking 'Retry Stage'.";
 };
 
 export type OptimizationStage = 1 | 2 | 3 | 4 | 5 | 6;
@@ -83,10 +87,15 @@ async function callBackendAPI(prompt: string) {
       body: JSON.stringify({ prompt }),
     });
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (e) {
+      throw new Error(`Server returned invalid response: ${response.status} ${response.statusText}`);
+    }
 
     if (!response.ok) {
-      throw new Error(data.error || "An error occurred during optimization.");
+      throw new Error(data.error || `Server Error (${response.status}): ${response.statusText}`);
     }
 
     return data.text;
