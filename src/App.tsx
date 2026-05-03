@@ -26,7 +26,7 @@ import {
 import ReactMarkdown from 'react-markdown';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
-import { optimizeResumeStage, type OptimizationStage } from './services/geminiService';
+import { optimizeResumeStage, generateCoverLetter, type OptimizationStage } from './services/geminiService';
 import { cn } from './lib/utils';
 import { extractTextFromPdf } from './lib/pdfUtils';
 
@@ -40,11 +40,14 @@ export default function App() {
   const [isReadingFile, setIsReadingFile] = useState(false);
   const [currentStage, setCurrentStage] = useState<OptimizationStage>(1);
   const [stageOutputs, setStageOutputs] = useState<string[]>([]);
+  const [coverLetter, setCoverLetter] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'resume' | 'cover-letter'>('resume');
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isDownloading, setIsDownloading] = useState<'pdf' | 'word' | null>(null);
+  const [isDownloading, setIsDownloading] = useState<'pdf' | 'word' | 'cl-word' | null>(null);
 
   const finalCvRef = useRef<HTMLDivElement>(null);
+  const finalClRef = useRef<HTMLDivElement>(null);
 
   // Deployment metadata
   const [adsClientId, setAdsClientId] = useState('');
@@ -214,6 +217,31 @@ export default function App() {
     }
   };
 
+  const downloadClWord = () => {
+    setIsDownloading('cl-word');
+    try {
+      const content = finalClRef.current?.innerHTML || '';
+      const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' "+
+            "xmlns:w='urn:schemas-microsoft-com:office:word' "+
+            "xmlns='http://www.w3.org/TR/REC-html40'>"+
+            "<head><meta charset='utf-8'><title>Export HTML to Word</title></head><body>";
+      const footer = "</body></html>";
+      const sourceHTML = header + content + footer;
+      
+      const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+      const fileDownload = document.createElement("a");
+      document.body.appendChild(fileDownload);
+      fileDownload.href = source;
+      fileDownload.download = 'Cover_Letter.doc';
+      fileDownload.click();
+      document.body.removeChild(fileDownload);
+    } catch (err) {
+      console.error('Cover Letter Word creation failed', err);
+    } finally {
+      setIsDownloading(null);
+    }
+  };
+
   const finalizeDeployment = () => {
     setPhase('COMPLETE');
   };
@@ -229,13 +257,22 @@ export default function App() {
         }, 3000); // 3 second delay to let user see the result
         return () => clearTimeout(timer);
       } else {
-        const timer = setTimeout(() => {
-          setPhase('COMPLETE');
+        const timer = setTimeout(async () => {
+          setIsProcessing(true);
+          try {
+            const cl = await generateCoverLetter(stageOutputs[5], jdText);
+            setCoverLetter(cl);
+          } catch (err) {
+            console.error("Cover letter generation failed", err);
+          } finally {
+            setIsProcessing(false);
+            setPhase('COMPLETE');
+          }
         }, 4000); // 4 second delay after final stage
         return () => clearTimeout(timer);
       }
     }
-  }, [phase, isProcessing, currentStage, stageOutputs, runStage]);
+  }, [phase, isProcessing, currentStage, stageOutputs, runStage, jdText]);
 
   const renderProgress = () => (
     <div className="flex items-center space-x-2 mb-8">
@@ -521,44 +558,102 @@ export default function App() {
               </div>
               <h2 className="text-3xl font-bold mb-2 italic font-serif text-neutral-900">Optimization Complete</h2>
               <p className="text-neutral-500 mb-8 max-w-sm mx-auto">
-                Your professional narrative has been fully transformed and is ready for high-impact applications.
+                Your professional narrative and cover letter have been fully transformed and are ready for high-impact applications.
               </p>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              {/* Tabs */}
+              <div className="flex border-b border-neutral-100 mb-6">
                 <button
-                  onClick={downloadPdf}
-                  disabled={!!isDownloading}
-                  className="flex items-center justify-center space-x-3 bg-neutral-900 hover:bg-neutral-800 text-white py-4 rounded-xl font-bold transition-all disabled:opacity-50"
-                >
-                  {isDownloading === 'pdf' ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <FileDown className="w-5 h-5" />
+                  onClick={() => setActiveTab('resume')}
+                  className={cn(
+                    "flex-1 py-4 text-sm font-bold uppercase tracking-widest transition-all border-b-2",
+                    activeTab === 'resume' ? "border-black text-black" : "border-transparent text-neutral-400 hover:text-neutral-600"
                   )}
-                  <span>Download PDF</span>
+                >
+                  Optimized Resume
                 </button>
                 <button
-                  onClick={downloadWord}
-                  disabled={!!isDownloading}
-                  className="flex items-center justify-center space-x-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 py-4 rounded-xl font-bold transition-all disabled:opacity-50"
-                >
-                  {isDownloading === 'word' ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <Download className="w-5 h-5" />
+                  onClick={() => setActiveTab('cover-letter')}
+                  className={cn(
+                    "flex-1 py-4 text-sm font-bold uppercase tracking-widest transition-all border-b-2",
+                    activeTab === 'cover-letter' ? "border-black text-black" : "border-transparent text-neutral-400 hover:text-neutral-600"
                   )}
-                  <span>Download Word</span>
+                >
+                  Cover Letter
                 </button>
               </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                {activeTab === 'resume' ? (
+                  <>
+                    <button
+                      onClick={downloadPdf}
+                      disabled={!!isDownloading}
+                      className="flex items-center justify-center space-x-3 bg-neutral-900 hover:bg-neutral-800 text-white py-4 rounded-xl font-bold transition-all disabled:opacity-50"
+                    >
+                      {isDownloading === 'pdf' ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <FileDown className="w-5 h-5" />
+                      )}
+                      <span>Download PDF</span>
+                    </button>
+                    <button
+                      onClick={downloadWord}
+                      disabled={!!isDownloading}
+                      className="flex items-center justify-center space-x-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 py-4 rounded-xl font-bold transition-all disabled:opacity-50"
+                    >
+                      {isDownloading === 'word' ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <Download className="w-5 h-5" />
+                      )}
+                      <span>Download Word</span>
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={downloadClWord}
+                    disabled={!!isDownloading}
+                    className="col-span-2 flex items-center justify-center space-x-3 bg-neutral-900 hover:bg-neutral-800 text-white py-4 rounded-xl font-bold transition-all disabled:opacity-50"
+                  >
+                    {isDownloading === 'cl-word' ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <FileDown className="w-5 h-5" />
+                    )}
+                    <span>Download Cover Letter (Word)</span>
+                  </button>
+                )}
+              </div>
+
               <div className="bg-neutral-50 p-6 rounded-xl text-left border border-neutral-200 mb-8 overflow-hidden">
-                <div className="text-[10px] font-bold text-neutral-400 uppercase mb-4 tracking-widest border-b border-neutral-100 pb-2">Final Optimized Document</div>
-                <div 
-                  ref={finalCvRef}
-                  className="markdown-body max-h-[400px] overflow-y-auto pr-2 bg-white p-6 rounded-lg border border-neutral-100 shadow-sm"
-                >
-                  <ReactMarkdown>{stageOutputs[5]}</ReactMarkdown>
+                <div className="text-[10px] font-bold text-neutral-400 uppercase mb-4 tracking-widest border-b border-neutral-100 pb-2">
+                  {activeTab === 'resume' ? "Final Optimized Document" : "Tailored Cover Letter"}
                 </div>
+                
+                {activeTab === 'resume' ? (
+                  <div 
+                    ref={finalCvRef}
+                    className="markdown-body max-h-[500px] overflow-y-auto pr-2 bg-white p-6 rounded-lg border border-neutral-100 shadow-sm"
+                  >
+                    <ReactMarkdown>{stageOutputs[5]}</ReactMarkdown>
+                  </div>
+                ) : (
+                  <div 
+                    ref={finalClRef}
+                    className="markdown-body max-h-[500px] overflow-y-auto pr-2 bg-white p-6 rounded-lg border border-neutral-100 shadow-sm"
+                  >
+                    {coverLetter ? (
+                      <ReactMarkdown>{coverLetter}</ReactMarkdown>
+                    ) : (
+                      <div className="py-12 text-center text-neutral-400">
+                        <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
+                        Generating cover letter...
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <button

@@ -87,3 +87,31 @@ Please provide your output in clean Markdown format.
     throw error;
   }
 }
+
+export async function generateCoverLetter(cvText: string, jdText: string) {
+  const prompt = `
+Context:
+Job Description:
+${jdText}
+
+Candidate Resume:
+${cvText}
+
+Instructions:
+You are a cover letter generator. Your task is to create a humanized and concise cover letter. To compose a compelling cover letter, you must scrutinise the job description for key qualifications. Begin with a succinct introduction about the candidate's identity and career goals. Highlight skills aligned with the job, underpinned by tangible examples. Incorporate details about the company, emphasising its mission or unique aspects that align with the candidate's values. Conclude by reaffirming the candidate's suitability, inviting further discussion. Use job-specific terminology for a tailored and impactful letter, maintaining a professional style suitable for the job role. Please provide your response in under 350 words.
+
+Please provide your output in clean Markdown format.
+`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: prompt,
+    });
+
+    return response.text;
+  } catch (error) {
+    console.error("Gemini Error:", error);
+    throw error;
+  }
+}
