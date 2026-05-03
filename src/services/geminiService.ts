@@ -1,6 +1,41 @@
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+let aiInstance: GoogleGenAI | null = null;
+
+const getAI = () => {
+  if (!aiInstance) {
+    const key = process.env.GEMINI_API_KEY;
+    if (!key || key === 'undefined' || key === 'null') {
+      throw new Error('GEMINI_API_KEY is missing. Please set it in your environment variables (Netlify/Github Secrets/Vite configs).');
+    }
+    aiInstance = new GoogleGenAI({ apiKey: key });
+  }
+  return aiInstance;
+};
+
+const handleGeminiError = (error: any) => {
+  console.error("Gemini Error Context:", error);
+  
+  const errorMessage = error?.message || "";
+  
+  if (errorMessage.includes("API_KEY") || errorMessage.includes("key not found")) {
+    return "Invalid or missing API key. Please check your environment configuration.";
+  }
+  
+  if (errorMessage.includes("429") || errorMessage.toLowerCase().includes("quota")) {
+    return "Rate limit exceeded. Please wait a few seconds before retrying.";
+  }
+  
+  if (errorMessage.toLowerCase().includes("safety") || errorMessage.toLowerCase().includes("candidate")) {
+    return "The AI safety filters blocked this request. Try adjusting the input text.";
+  }
+
+  if (errorMessage.toLowerCase().includes("fetch") || errorMessage.toLowerCase().includes("network")) {
+    return "Network error. Please check your internet connection.";
+  }
+
+  return "The AI engine encountered an issue. Please try clicking 'Retry Stage'.";
+};
 
 export type OptimizationStage = 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -76,15 +111,19 @@ Please provide your output in clean Markdown format.
 `;
 
   try {
+    const ai = getAI();
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: prompt,
     });
 
+    if (!response.text) {
+      throw new Error("The AI returned an empty response.");
+    }
+
     return response.text;
   } catch (error) {
-    console.error("Gemini Error:", error);
-    throw error;
+    throw new Error(handleGeminiError(error));
   }
 }
 
@@ -104,14 +143,18 @@ Please provide your output in clean Markdown format.
 `;
 
   try {
+    const ai = getAI();
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: prompt,
     });
 
+    if (!response.text) {
+      throw new Error("The AI returned an empty response.");
+    }
+
     return response.text;
   } catch (error) {
-    console.error("Gemini Error:", error);
-    throw error;
+    throw new Error(handleGeminiError(error));
   }
 }

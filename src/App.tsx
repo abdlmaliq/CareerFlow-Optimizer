@@ -109,7 +109,8 @@ export default function App() {
         });
       }
     } catch (err) {
-      setError('Optimization failed. Please check your connection and try again.');
+      console.error("Stage error:", err);
+      setError(err instanceof Error ? err.message : 'Optimization failed. Please check your connection and try again.');
     } finally {
       setIsProcessing(false);
     }
@@ -446,10 +447,34 @@ export default function App() {
                     <div className="markdown-body">
                       <ReactMarkdown>{stageOutputs[currentStage - 1]}</ReactMarkdown>
                     </div>
-                  ) : !isProcessing && (
+                  ) : !isProcessing ? (
+                    <div className="h-full flex flex-col items-center justify-center text-neutral-400 space-y-4">
+                      {error ? (
+                        <div className="flex flex-col items-center p-8 text-center bg-red-50 rounded-xl border border-red-100 max-w-md">
+                          <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+                          <h3 className="text-red-900 font-bold mb-2 uppercase text-xs tracking-widest">Optimization Error</h3>
+                          <p className="text-red-600 text-sm mb-6 leading-relaxed">
+                            {error}
+                          </p>
+                          <button 
+                            onClick={() => runStage(currentStage)}
+                            className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg text-sm font-bold transition-all shadow-md active:scale-95 flex items-center"
+                          >
+                            <Sparkles className="w-4 h-4 mr-2" />
+                            Retry Stage {currentStage}
+                          </button>
+                        </div>
+                      ) : (
+                        <>
+                          <Loader2 className="w-12 h-12 animate-spin" />
+                          <p>Engine warm-up in progress...</p>
+                        </>
+                      )}
+                    </div>
+                  ) : (
                     <div className="h-full flex flex-col items-center justify-center text-neutral-400 space-y-4">
                       <Loader2 className="w-12 h-12 animate-spin" />
-                      <p>Engine warm-up in progress...</p>
+                      <p className="animate-pulse">Analyzing and refining Stage {currentStage}...</p>
                     </div>
                   )}
                 </div>
