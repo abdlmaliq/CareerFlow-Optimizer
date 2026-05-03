@@ -1,3 +1,18 @@
+import { GoogleGenAI } from "@google/genai";
+
+let aiInstance: GoogleGenAI | null = null;
+
+const getAI = () => {
+  if (!aiInstance) {
+    const key = process.env.GEMINI_API_KEY;
+    if (!key || key === 'undefined' || key === 'null') {
+      throw new Error('GEMINI_API_KEY is missing. Please set it in your environment variables.');
+    }
+    aiInstance = new GoogleGenAI({ apiKey: key });
+  }
+  return aiInstance;
+};
+
 const handleGeminiError = (error: any) => {
   console.error("Gemini Error Context:", error);
   
@@ -8,7 +23,7 @@ const handleGeminiError = (error: any) => {
   }
   
   if (errorMessage.includes("429") || errorMessage.toLowerCase().includes("quota") || errorMessage.toLowerCase().includes("too many")) {
-    return errorMessage || "Rate limit exceeded. Please wait a few minutes before retrying.";
+    return "Rate limit exceeded. Please wait a few minutes before retrying.";
   }
   
   if (errorMessage.toLowerCase().includes("safety") || errorMessage.toLowerCase().includes("candidate")) {
@@ -77,33 +92,6 @@ Requirements:
 • At the very bottom of the response, after a "--- BENCHMARK ---" separator, provide a ranking (e.g., Top 5%) and 3 final improvement tips to stay competitive.`
 };
 
-async function callBackendAPI(prompt: string) {
-  try {
-    const response = await fetch("/api/optimize", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ prompt }),
-    });
-
-    let data;
-    try {
-      data = await response.json();
-    } catch (e) {
-      throw new Error(`Server returned invalid response: ${response.status} ${response.statusText}`);
-    }
-
-    if (!response.ok) {
-      throw new Error(data.error || `Server Error (${response.status}): ${response.statusText}`);
-    }
-
-    return data.text;
-  } catch (error: any) {
-    throw new Error(handleGeminiError(error));
-  }
-}
-
 export async function optimizeResumeStage(
   stage: OptimizationStage,
   cvText: string,
@@ -126,7 +114,21 @@ ${currentPrompt}
 Please provide your output in clean Markdown format.
 `;
 
-  return callBackendAPI(prompt);
+  try {
+    const ai = getAI();
+    const result = await ai.models.generateContent({
+      model: "gemini-flash-latest",
+      contents: prompt,
+    });
+
+    if (!result.text) {
+      throw new Error("The AI returned an empty response.");
+    }
+
+    return result.text;
+  } catch (error) {
+    throw new Error(handleGeminiError(error));
+  }
 }
 
 export async function generateCoverLetter(cvText: string, jdText: string) {
@@ -144,5 +146,19 @@ You are a cover letter generator. Your task is to create a humanized and concise
 Please provide your output in clean Markdown format.
 `;
 
-  return callBackendAPI(prompt);
+  try {
+    const ai = getAI();
+    const result = await ai.models.generateContent({
+      model: "gemini-flash-latest",
+      contents: prompt,
+    });
+
+    if (!result.text) {
+      throw new Error("The AI returned an empty response.");
+    }
+
+    return result.text;
+  } catch (error) {
+    throw new Error(handleGeminiError(error));
+  }
 }
