@@ -26,7 +26,7 @@ import {
 import ReactMarkdown from 'react-markdown';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
-import { optimizeResumeStage, generateCoverLetter, type OptimizationStage } from './services/geminiService';
+import { optimizeResumeStage, generateCoverLetter, checkDailyLimit, incrementUsage, type OptimizationStage } from './services/geminiService';
 import { cn } from './lib/utils';
 import { extractTextFromPdf } from './lib/pdfUtils';
 
@@ -87,6 +87,13 @@ export default function App() {
   };
 
   const startOptimization = () => {
+    const { allowed, remaining } = checkDailyLimit();
+    
+    if (!allowed) {
+      setError("Daily limit reached. You can only perform 5 full optimizations every 24 hours. Please come back tomorrow to continue refining your career path!");
+      return;
+    }
+
     if (!jdText.trim() || !cvText.trim()) {
       setError('Please provide both the Job Description and your uploaded CV.');
       return;
@@ -263,6 +270,7 @@ export default function App() {
           try {
             const cl = await generateCoverLetter(stageOutputs[5], jdText);
             setCoverLetter(cl);
+            incrementUsage();
           } catch (err) {
             console.error("Cover letter generation failed", err);
           } finally {
@@ -299,14 +307,20 @@ export default function App() {
       <div className="max-w-5xl w-full">
         {/* Header */}
         <header className="mb-16 text-center">
-          <motion.div 
+            <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center bg-premium-black text-white px-4 py-1.5 rounded-full text-[10px] font-bold mb-6 tracking-[0.2em] uppercase"
+            className="inline-flex items-center bg-premium-black text-white px-4 py-1.5 rounded-full text-[10px] font-bold mb-4 tracking-[0.2em] uppercase"
           >
             <Sparkles className="w-3.5 h-3.5 mr-2 text-premium-accent" />
             Intelligence-Driven Optimization
           </motion.div>
+          
+          <div className="mb-6">
+            <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] bg-slate-100/50 px-3 py-1 rounded-lg">
+              Daily Credits: {checkDailyLimit().remaining} / 5 Remaining
+            </span>
+          </div>
           
           <h1 className="text-6xl md:text-7xl font-serif italic font-bold text-premium-black tracking-tighter mb-6 relative inline-block">
             CareerFlow

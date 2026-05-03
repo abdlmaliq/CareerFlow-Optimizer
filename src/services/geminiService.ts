@@ -6,39 +6,70 @@ const getAI = () => {
   if (!aiInstance) {
     const key = process.env.GEMINI_API_KEY;
     if (!key || key === 'undefined' || key === 'null') {
-      throw new Error('GEMINI_API_KEY is missing. Please set it in your environment variables.');
+      throw new Error('GEMINI_API_KEY is missing. Please ensure it is set in the environment.');
     }
     aiInstance = new GoogleGenAI({ apiKey: key });
   }
   return aiInstance;
 };
 
-const handleGeminiError = (error: any) => {
-  console.error("Gemini Error Context:", error);
+// Daily usage tracking
+const DAILY_LIMIT = 5;
+const STORAGE_KEY = 'career_flow_usage_v1';
+
+interface UsageData {
+  count: number;
+  lastResetDate: string; // YYYY-MM-DD
+}
+
+export const checkDailyLimit = (): { allowed: boolean; remaining: number } => {
+  const today = new Date().toISOString().split('T')[0];
+  const stored = localStorage.getItem(STORAGE_KEY);
   
-  const errorMessage = error?.message || "";
+  let data: UsageData = stored ? JSON.parse(stored) : { count: 0, lastResetDate: today };
   
-  if (errorMessage.includes("API_KEY") || errorMessage.includes("key not found")) {
-    return "Invalid or missing API key. Please check your environment configuration.";
+  if (data.lastResetDate !== today) {
+    data = { count: 0, lastResetDate: today };
   }
   
-  if (errorMessage.includes("429") || errorMessage.toLowerCase().includes("quota") || errorMessage.toLowerCase().includes("too many")) {
-    return "Rate limit exceeded. Please wait a few minutes before retrying.";
+  return {
+    allowed: data.count < DAILY_LIMIT,
+    remaining: Math.max(0, DAILY_LIMIT - data.count)
+  };
+};
+
+export const incrementUsage = () => {
+  const today = new Date().toISOString().split('T')[0];
+  const stored = localStorage.getItem(STORAGE_KEY);
+  let data: UsageData = stored ? JSON.parse(stored) : { count: 0, lastResetDate: today };
+  
+  if (data.lastResetDate !== today) {
+    data.count = 1;
+    data.lastResetDate = today;
+  } else {
+    data.count += 1;
+  }
+  
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+};
+
+const handleGeminiError = (error: any) => {
+  console.error("Gemini Error Context:", error);
+  const errorMessage = error?.message || "";
+  
+  if (errorMessage.includes("API_KEY")) {
+    return "Invalid API key configuration. Please contact support or check settings.";
+  }
+  
+  if (errorMessage.includes("429") || errorMessage.toLowerCase().includes("quota")) {
+    return "Model rate limit reached. Please wait a moment before trying again.";
   }
   
   if (errorMessage.toLowerCase().includes("safety") || errorMessage.toLowerCase().includes("candidate")) {
-    return "The AI safety filters blocked this request. Try adjusting the input text.";
+    return "The AI safety filters blocked this request. Try adjusting your input.";
   }
 
-  if (errorMessage.toLowerCase().includes("payload too large") || errorMessage.toLowerCase().includes("413")) {
-    return "The input data is too large for the processing engine. Try shortening your resume or JD.";
-  }
-
-  if (errorMessage.toLowerCase().includes("fetch") || errorMessage.toLowerCase().includes("network")) {
-    return "Network error. Please check your internet connection.";
-  }
-
-  return errorMessage || "The AI engine encountered an issue. Please try clicking 'Retry Stage'.";
+  return "The AI engine encountered an issue. Please try clicking 'Retry Stage'.";
 };
 
 export type OptimizationStage = 1 | 2 | 3 | 4 | 5 | 6;
@@ -99,7 +130,6 @@ export async function optimizeResumeStage(
   previousOutputs: string[]
 ) {
   const currentPrompt = STAGE_SYSTEM_PROMPTS[stage];
-  
   const prompt = `
 Context:
 Job Description:
@@ -117,7 +147,7 @@ Please provide your output in clean Markdown format.
   try {
     const ai = getAI();
     const result = await ai.models.generateContent({
-      model: "gemini-flash-latest",
+      model: "gemini-3-flash-preview",
       contents: prompt,
     });
 
@@ -149,7 +179,7 @@ Please provide your output in clean Markdown format.
   try {
     const ai = getAI();
     const result = await ai.models.generateContent({
-      model: "gemini-flash-latest",
+      model: "gemini-3-flash-preview",
       contents: prompt,
     });
 
