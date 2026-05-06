@@ -29,11 +29,15 @@ import html2canvas from 'html2canvas';
 import { optimizeResumeStage, generateCoverLetter, checkDailyLimit, incrementUsage, type OptimizationStage } from './services/geminiService';
 import { cn } from './lib/utils';
 import { extractTextFromPdf } from './lib/pdfUtils';
+import { StaticPage, PrivacyContent, TermsContent, AboutContent } from './components/StaticPages';
+import { Shield, FileText as FileTextIcon, Info, HelpCircle, BookOpen, Star } from 'lucide-react';
 
 type Phase = 'INPUT' | 'OPTIMIZING' | 'DEPLOYMENT' | 'COMPLETE';
+type StaticPageType = 'HOME' | 'ABOUT' | 'PRIVACY' | 'TERMS';
 
 export default function App() {
   const [phase, setPhase] = useState<Phase>('INPUT');
+  const [currentPage, setCurrentPage] = useState<StaticPageType>('HOME');
   const [jdText, setJdText] = useState('');
   const [cvText, setCvText] = useState('');
   const [cvFileName, setCvFileName] = useState<string | null>(null);
@@ -305,8 +309,10 @@ export default function App() {
   return (
     <div className="min-h-screen bg-premium-bg flex flex-col items-center py-16 px-4 selection:bg-premium-accent/10">
       <div className="max-w-5xl w-full">
-        {/* Header */}
-        <header className="mb-16 text-center">
+        {currentPage === 'HOME' ? (
+          <>
+            {/* Header */}
+            <header className="mb-16 text-center">
             <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -793,15 +799,115 @@ export default function App() {
           )}
         </AnimatePresence>
 
+        {currentPage === 'HOME' && phase === 'INPUT' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="mt-24 space-y-20 mb-20"
+          >
+            {/* Strategy Section */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+                <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-6">
+                  <Star className="text-blue-500 w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-bold text-premium-black mb-3 italic">ATS Precision</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">
+                  Our neural engine reverse-engineers job descriptions to ensure your profile scores in the top 1% of Applicant Tracking Systems.
+                </p>
+              </div>
+              <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+                <div className="w-12 h-12 bg-purple-50 rounded-2xl flex items-center justify-center mb-6">
+                  <HelpCircle className="text-purple-500 w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-bold text-premium-black mb-3 italic">Market Alignment</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">
+                  We don't just fix grammar; we align your experience with current market demands and recruiter-specific semantic triggers.
+                </p>
+              </div>
+              <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+                <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center mb-6">
+                  <BookOpen className="text-green-500 w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-bold text-premium-black mb-3 italic">Career Narrative</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">
+                  Transform fragmented bullet points into a cohesive professional story that proves your value before the first interview.
+                </p>
+              </div>
+            </div>
+
+            {/* How it Works Section - High Text Content for AdSense */}
+            <div className="bg-slate-900 text-white p-12 md:p-20 rounded-[3rem] overflow-hidden relative">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-premium-accent/20 blur-[100px] -mr-32 -mt-32" />
+              <div className="relative z-10 max-w-2xl">
+                <h2 className="text-4xl font-display font-bold mb-8 tracking-tight">The 6-Stage Optimization Protocol</h2>
+                <div className="space-y-6 text-slate-400 text-base leading-relaxed">
+                  <p>
+                    CareerFlow uses a sophisticated multi-stage approach to resume refinement. Unlike simple AI prompts, our system decomposes your professional identity and reconstructs it through the lens of a specific career goal.
+                  </p>
+                  <ul className="space-y-4 list-none p-0">
+                    <li className="flex items-start">
+                      <span className="text-premium-accent font-bold mr-4">01</span>
+                      <span>Strategic Tailoring: We identify core competencies within the JD that your current CV might be underselling.</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-premium-accent font-bold mr-4">02</span>
+                      <span>Action-Result Synthesis: Every bullet point is re-engineered to emphasize measurable impact over passive duties.</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-premium-accent font-bold mr-4">03</span>
+                      <span>Executive Branding: We craft a summary that positions you not just as a candidate, but as a solution.</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+        </>
+        ) : null}
+
+        {currentPage === 'ABOUT' && (
+          <StaticPage 
+            title="About CareerFlow" 
+            icon={<Info className="w-6 h-6 text-blue-500" />}
+            content={AboutContent}
+            onBack={() => setCurrentPage('HOME')}
+          />
+        )}
+
+        {currentPage === 'PRIVACY' && (
+          <StaticPage 
+            title="Privacy Guard" 
+            icon={<Shield className="w-6 h-6 text-green-500" />}
+            content={PrivacyContent}
+            onBack={() => setCurrentPage('HOME')}
+          />
+        )}
+
+        {currentPage === 'TERMS' && (
+          <StaticPage 
+            title="Operating Terms" 
+            icon={<FileTextIcon className="w-6 h-6 text-slate-500" />}
+            content={TermsContent}
+            onBack={() => setCurrentPage('HOME')}
+          />
+        )}
+
         {/* Footer */}
         <footer className="mt-20 text-center pb-20">
-          <div className="flex items-center justify-center space-x-6 text-[11px] font-bold text-slate-300 uppercase tracking-[0.3em] mb-4">
+          <div className="flex flex-wrap items-center justify-center gap-6 text-[11px] font-bold text-slate-300 uppercase tracking-[0.3em] mb-8">
+            <button onClick={() => setCurrentPage('ABOUT')} className="hover:text-premium-black transition-colors pointer-events-auto">About Us</button>
+            <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+            <button onClick={() => setCurrentPage('PRIVACY')} className="hover:text-premium-black transition-colors pointer-events-auto">Privacy</button>
+            <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+            <button onClick={() => setCurrentPage('TERMS')} className="hover:text-premium-black transition-colors pointer-events-auto">Terms of Service</button>
+            <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
             <span>Optimized by Gemini</span>
-            <div className="w-1 h-1 rounded-full bg-slate-200" />
-            <span>Enterprise Grade</span>
           </div>
-          <p className="text-[9px] text-slate-300 opacity-50 uppercase tracking-[0.1em]">
-            © 2026 CoreFlow Intelligence Systems • All Rights Reserved
+          <p className="text-[10px] text-slate-300 tracking-widest uppercase italic font-medium">
+            © 2026 CoreFlow Intelligence Systems • Architecting Professional Success
           </p>
         </footer>
       </div>
