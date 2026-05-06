@@ -329,7 +329,7 @@ export default function App() {
           </div>
           
           <h1 className="text-6xl md:text-7xl font-serif italic font-bold text-premium-black tracking-tighter mb-6 relative inline-block">
-            CareerFlow
+            🌊 CareerFlow
             <span className="absolute -top-4 -right-12 font-display not-italic text-xs bg-premium-accent text-white px-2 py-0.5 rounded italic tracking-normal">v2.0</span>
           </h1>
           

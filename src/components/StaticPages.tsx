@@ -30,7 +30,10 @@ export const StaticPage: React.FC<StaticPageProps> = ({ title, onBack, content, 
           <div className="bg-slate-100 p-4 rounded-2xl">
             {icon}
           </div>
-          <h1 className="text-4xl font-display font-black text-premium-black tracking-tight">{title}</h1>
+          <div>
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 block">CareerFlow 🌊</span>
+            <h1 className="text-4xl font-display font-black text-premium-black tracking-tight">{title}</h1>
+          </div>
         </div>
 
         <div className="markdown-body prose prose-slate max-w-none">
