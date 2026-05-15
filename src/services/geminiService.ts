@@ -82,7 +82,8 @@ Requirements:
 • Reorder bullet points based on relevance to the role.
 • Rewrite each bullet to show impact (Action + Task + Result).
 • Integrate ATS keywords naturally.
-• Keep formatting clean and professional.`,
+• Keep formatting clean and professional.
+• DO NOT invent new roles, companies, or years of experience.`,
   
   2: `Rewrite the work experience section to directly match the role.
 Requirements:
@@ -90,7 +91,8 @@ Requirements:
 • For each role, rewrite bullets using: Action verb + Task + Method + Result.
 • Quantify results (%, $, time saved).
 • Limit to 3–5 high-impact bullets per role.
-• Sound like this experience directly prepared the candidate for this specific job.`,
+• Sound like this experience directly prepared the candidate for this specific job.
+• DO NOT fabricate achievements or metrics that aren't supported by the original text.`,
 
   3: `Optimize for ATS (Applicant Tracking Systems).
 Requirements:
@@ -98,21 +100,23 @@ Requirements:
 • Inject top keywords, skills, and competencies from the JD naturally.
 • Ensure readability for human recruiters while scoring high for scanners.
 • Highlight relevant tools and technical skills prominently.
-• At the end of the document, add a separator "--- ATS HIGHLIGHTS ---" followed by the top keywords used.`,
+• At the end of the document, add a separator "--- ATS HIGHLIGHTS ---" followed by the top keywords used.
+• ONLY use keywords that the candidate actually possesses or has demonstrated.`,
 
   4: `Identify gaps and reframe experience.
 Requirements:
 • Return the FULL updated resume in Markdown.
 • Use transferable skills to cover any experience gaps identified from the JD.
 • Adjust wording to industry-specific language.
-• Suggest subtle additions based on common industry experience (without fabricating).`,
+• ONLY use existing context. NEVER hallucinate roles, awards, or specific technical certifications that aren't in the input.`,
 
   5: `Write a powerful professional summary.
 Requirements:
 • Return the FULL updated resume in Markdown.
 • Create a 3–4 line professional summary at the top.
 • Include years of experience, specialization, and key strengths matching the JD.
-• Positioning the candidate as an immediate fit for this specific role.`,
+• Positioning the candidate as an immediate fit for this specific role.
+• REMAIN TRUTHFUL: Do not inflate job titles or years of experience.`,
 
   6: `Act as a hiring manager. Final polish for a Top 1% candidate profile.
 Requirements:
@@ -120,7 +124,8 @@ Requirements:
 • Ensure the tone is executive, confident, and precise.
 • The formatting must be immaculate (Consulting/Big 4 standard).
 • Include a clear contact info placeholder at the top if missing.
-• At the very bottom of the response, after a "--- BENCHMARK ---" separator, provide a ranking (e.g., Top 5%) and 3 final improvement tips to stay competitive.`
+• At the very bottom of the response, after a "--- BENCHMARK ---" separator, provide a ranking (e.g., Top 5%) and 3 final improvement tips to stay competitive.
+• ABSOLUTE RULE: Zero fabrication. Only optimize existing information.`
 };
 
 export async function optimizeResumeStage(
@@ -140,6 +145,9 @@ ${stage === 1 ? cvText : previousOutputs[stage - 2]}
 
 Instructions:
 ${currentPrompt}
+
+Integrity Constraint:
+Strictly optimize what already exists. DO NOT invent fake roles, companies, achievements, or certifications. Reframe and refine existing text to match the JD, but do not hallucinate information.
 
 Please provide your output in clean Markdown format.
 `;
@@ -172,6 +180,9 @@ ${cvText}
 
 Instructions:
 You are a cover letter generator. Your task is to create a humanized and concise cover letter. To compose a compelling cover letter, you must scrutinise the job description for key qualifications. Begin with a succinct introduction about the candidate's identity and career goals. Highlight skills aligned with the job, underpinned by tangible examples. Incorporate details about the company, emphasising its mission or unique aspects that align with the candidate's values. Conclude by reaffirming the candidate's suitability, inviting further discussion. Use job-specific terminology for a tailored and impactful letter, maintaining a professional style suitable for the job role. Please provide your response in under 350 words.
+
+Integrity Constraint:
+Do NOT fabricate experiences or achievements. Only use the information provided in the Candidate Resume.
 
 Please provide your output in clean Markdown format.
 `;
